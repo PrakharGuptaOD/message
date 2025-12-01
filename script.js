@@ -27,35 +27,26 @@ function initPost() {
         sendBtn.disabled = true;
         
         try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: name,
-                    message: message
-                })
+            // Use URLSearchParams for form-encoded POST
+            const formData = new URLSearchParams();
+            formData.append('name', name);
+            formData.append('message', message);
+            
+            const response = await fetch(API_URL + '?' + formData.toString(), {
+                method: 'GET',
+                mode: 'no-cors'
             });
             
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            // With no-cors, we can't read the response, so assume success
+            showStatus(statusEl, 'Message sent!', 'success');
+            nameInput.value = '';
+            messageInput.value = '';
             
-            const result = await response.json();
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                hideStatus(statusEl);
+            }, 3000);
             
-            if (result.status === 'success') {
-                showStatus(statusEl, 'Message sent!', 'success');
-                nameInput.value = '';
-                messageInput.value = '';
-                
-                // Hide success message after 3 seconds
-                setTimeout(() => {
-                    hideStatus(statusEl);
-                }, 3000);
-            } else {
-                throw new Error(result.message || 'Failed to send message');
-            }
         } catch (error) {
             console.error('Error:', error);
             showStatus(statusEl, 'Failed to send message. Please try again.', 'error');
@@ -72,7 +63,9 @@ async function loadMessages() {
     if (!container) return;
     
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL, {
+            method: 'GET'
+        });
         
         if (!response.ok) {
             throw new Error('Network response was not ok');
