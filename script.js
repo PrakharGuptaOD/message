@@ -9,7 +9,7 @@ function initPost() {
     
     if (!form) return;
     
-    form.addEventListener('submit', async function(e) {
+    form.addEventListener('submit', function(e) { // Removed 'async' to avoid blocking
         e.preventDefault();
         
         const nameInput = document.getElementById('name');
@@ -22,37 +22,39 @@ function initPost() {
             return;
         }
         
-        // Show sending status
-        showStatus(statusEl, 'Sending...', 'sending');
-        sendBtn.disabled = true;
+        // --- OPTIMIZATION START: Optimistic UI Update ---
+        // Don't wait for the slow Google Script. Assume success immediately.
         
-        try {
-            // Use URLSearchParams for form-encoded POST
-            const formData = new URLSearchParams();
-            formData.append('name', name);
-            formData.append('message', message);
-            
-            const response = await fetch(API_URL + '?' + formData.toString(), {
-                method: 'GET',
-                mode: 'no-cors'
-            });
-            
-            // With no-cors, we can't read the response, so assume success
-            showStatus(statusEl, 'Message sent!', 'success');
-            nameInput.value = '';
-            messageInput.value = '';
-            
-            // Hide success message after 3 seconds
-            setTimeout(() => {
-                hideStatus(statusEl);
-            }, 3000);
-            
-        } catch (error) {
-            console.error('Error:', error);
-            showStatus(statusEl, 'Failed to send message. Please try again.', 'error');
-        } finally {
+        // 1. Show success immediately
+        showStatus(statusEl, 'Message sent!', 'success');
+        
+        // 2. Clear inputs immediately
+        const formData = new URLSearchParams();
+        formData.append('name', name);
+        formData.append('message', message);
+        
+        nameInput.value = '';
+        messageInput.value = '';
+        sendBtn.disabled = true; // Prevent double-submit briefly
+
+        // 3. Send data in the background (Fire and Forget)
+        fetch(API_URL + '?' + formData.toString(), {
+            method: 'GET',
+            mode: 'no-cors'
+        }).then(() => {
+            console.log('Background fetch completed');
+        }).catch(error => {
+            console.error('Background send failed:', error);
+            // Optional: Alert user if network truly fails, though rare
+        }).finally(() => {
             sendBtn.disabled = false;
-        }
+        });
+
+        // 4. Hide success message after 3 seconds
+        setTimeout(() => {
+            hideStatus(statusEl);
+        }, 3000);
+        // --- OPTIMIZATION END ---
     });
 }
 
@@ -61,6 +63,28 @@ async function loadMessages() {
     const container = document.getElementById('messagesContainer');
     
     if (!container) return;
+
+    // --- OPTIMIZATION START: Local Storage Caching ---
+    // 1. Load cached messages INSTANTLY if they exist
+    const cachedMessages = localStorage.getItem('chat_messages');
+    if (cachedMessages) {
+        try {
+            const parsed = JSON.parse(cachedMessages);
+            if (parsed && parsed.length > 0) {
+                displayMessages(container, parsed);
+                // Add a small indicator that we are checking for updates
+                const updateIndicator = document.createElement('div');
+                updateIndicator.className = 'message-timestamp';
+                updateIndicator.style.textAlign = 'center';
+                updateIndicator.style.marginTop = '10px';
+                updateIndicator.textContent = 'Checking for new messages...';
+                container.prepend(updateIndicator);
+            }
+        } catch (e) {
+            console.error("Cache parse error", e);
+        }
+    }
+    // --- OPTIMIZATION END ---
     
     try {
         const response = await fetch(API_URL, {
@@ -74,13 +98,21 @@ async function loadMessages() {
         const result = await response.json();
         
         if (result.status === 'success' && result.data && result.data.length > 0) {
+            // Save fresh data to cache
+            localStorage.setItem('chat_messages', JSON.stringify(result.data));
             displayMessages(container, result.data);
         } else {
-            container.innerHTML = '<div class="no-messages">No messages yet. Be the first to post!</div>';
+            // Only show "No messages" if we don't have cached messages either
+            if (!cachedMessages) {
+                container.innerHTML = '<div class="no-messages">No messages yet. Be the first to post!</div>';
+            }
         }
     } catch (error) {
         console.error('Error:', error);
-        container.innerHTML = '<div class="no-messages">Failed to load messages. Please try again later.</div>';
+        // Only show error if we have nothing on screen
+        if (!container.children.length) {
+            container.innerHTML = '<div class="no-messages">Failed to load messages. Please try again later.</div>';
+        }
     }
 }
 
@@ -89,7 +121,8 @@ function displayMessages(container, messages) {
     container.innerHTML = '';
     
     // Reverse to show newest first
-    const sortedMessages = messages.reverse();
+    // Create a copy to avoid mutating the original array if it came from cache
+    const sortedMessages = [...messages].reverse();
     
     sortedMessages.forEach(msg => {
         const messageBox = document.createElement('div');
