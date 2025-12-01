@@ -1,38 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Post Message</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Message</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
-    <h1 class="title">Post a Message</h1>
-
-    <form id="postForm" class="card" onsubmit="return false;">
-      <label for="name">Name</label>
-      <input id="name" name="name" type="text" placeholder="Your name" required />
-
-      <label for="message">Message</label>
-      <textarea id="message" name="message" rows="5" placeholder="Write your message..." required></textarea>
-
-      <button id="sendBtn" class="full-btn" type="submit">Send</button>
-
-      <div id="status" class="status" aria-live="polite"></div>
-
-      <div class="links">
-        <a href="view.html">View messages →</a>
-      </div>
-    </form>
-  </main>
-
-  <script src="script.js"></script>
-  <script>
-    // initialize post page behavior
-    document.addEventListener('DOMContentLoaded', function () {
-      if (typeof initPost === 'function') initPost();
-    });
-  </script>
+    <div class="container">
+        <h1>Post a Message</h1>
+        
+        <form id="messageForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required placeholder="Enter your name">
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="5" required placeholder="Enter your message"></textarea>
+            </div>
+            
+            <button type="submit" id="sendBtn">Send</button>
+            
+            <div id="status" class="status"></div>
+        </form>
+        
+        <div class="link-container">
+            <a href="view.html" class="view-link">View All Messages</a>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        // Initialize the post functionality when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initPost();
+        });
+    </script>
 </body>
 </html>
