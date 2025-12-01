@@ -1,31 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>View Messages</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Messages</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
-    <h1 class="title">Messages</h1>
-
-    <div id="messagesContainer" class="messages-card card">
-      <div id="loading" class="status">Loading messages…</div>
-      <div id="messagesList"></div>
+    <div class="container">
+        <h1>All Messages</h1>
+        
+        <div id="messagesContainer" class="messages-container">
+            <div class="loading">Loading messages...</div>
+        </div>
+        
+        <div class="link-container">
+            <a href="index.html" class="view-link">Post a New Message</a>
+        </div>
     </div>
-
-    <div class="links" style="margin-top: 1rem;">
-      <a href="index.html">← Post a message</a>
-    </div>
-  </main>
-
-  <script src="script.js"></script>
-  <script>
-    // load messages on page open
-    document.addEventListener('DOMContentLoaded', function () {
-      if (typeof loadMessages === 'function') loadMessages();
-    });
-  </script>
+    
+    <script src="script.js"></script>
+    <script>
+        // Load messages when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMessages();
+        });
+    </script>
 </body>
 </html>
