@@ -10,9 +10,15 @@
     <div class="container">
         <h1>All Messages</h1>
         
-        <div id="messagesContainer" class="messages-container">
-            <div class="loading">Loading messages...</div>
+        <div id="passwordSection">
+            <p style="text-align: center; margin-bottom: 20px;">This page is password protected.</p>
+            <div class="form-group">
+                <input type="password" id="viewPassword" placeholder="Enter Password" required>
+            </div>
+            <button onclick="loadMessages()">Unlock & View</button>
         </div>
+
+        <div id="messagesContainer" class="messages-container"></div>
         
         <div class="link-container">
             <a href="index.html" class="view-link">Post a New Message</a>
@@ -20,11 +26,5 @@
     </div>
     
     <script src="script.js"></script>
-    <script>
-        // Load messages when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            loadMessages();
-        });
-    </script>
 </body>
 </html>
