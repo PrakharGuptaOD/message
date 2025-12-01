@@ -61,58 +61,39 @@ function initPost() {
 // Load messages for view.html
 async function loadMessages() {
     const container = document.getElementById('messagesContainer');
+    const passwordSection = document.getElementById('passwordSection');
     
-    if (!container) return;
-
-    // --- OPTIMIZATION START: Local Storage Caching ---
-    // 1. Load cached messages INSTANTLY if they exist
-    const cachedMessages = localStorage.getItem('chat_messages');
-    if (cachedMessages) {
-        try {
-            const parsed = JSON.parse(cachedMessages);
-            if (parsed && parsed.length > 0) {
-                displayMessages(container, parsed);
-                // Add a small indicator that we are checking for updates
-                const updateIndicator = document.createElement('div');
-                updateIndicator.className = 'message-timestamp';
-                updateIndicator.style.textAlign = 'center';
-                updateIndicator.style.marginTop = '10px';
-                updateIndicator.textContent = 'Checking for new messages...';
-                container.prepend(updateIndicator);
-            }
-        } catch (e) {
-            console.error("Cache parse error", e);
-        }
+    // 1. GRAB THE PASSWORD FROM HTML
+    // This 'viewPassword' ID must match the HTML input ID above
+    const userPassword = document.getElementById('viewPassword').value; 
+    
+    if (!userPassword) {
+        alert("Please enter a password");
+        return;
     }
-    // --- OPTIMIZATION END ---
+
+    container.innerHTML = '<div class="loading">Verifying password...</div>';
     
     try {
-        const response = await fetch(API_URL, {
+        // 2. SEND PASSWORD TO GOOGLE SCRIPT
+        const response = await fetch(API_URL + "?password=" + encodeURIComponent(userPassword), {
             method: 'GET'
         });
         
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        
         const result = await response.json();
         
-        if (result.status === 'success' && result.data && result.data.length > 0) {
-            // Save fresh data to cache
-            localStorage.setItem('chat_messages', JSON.stringify(result.data));
+        if (result.status === 'success') {
+            // Password was correct! Hide password box, show messages.
+            passwordSection.style.display = 'none';
             displayMessages(container, result.data);
         } else {
-            // Only show "No messages" if we don't have cached messages either
-            if (!cachedMessages) {
-                container.innerHTML = '<div class="no-messages">No messages yet. Be the first to post!</div>';
-            }
+            // Password was wrong (backend rejected it)
+            container.innerHTML = '';
+            alert("Incorrect Password!");
         }
     } catch (error) {
         console.error('Error:', error);
-        // Only show error if we have nothing on screen
-        if (!container.children.length) {
-            container.innerHTML = '<div class="no-messages">Failed to load messages. Please try again later.</div>';
-        }
+        container.innerHTML = '<div class="no-messages">Error connecting to server.</div>';
     }
 }
 
