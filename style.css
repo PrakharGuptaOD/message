@@ -1,0 +1,149 @@
+/* style.css - simple, responsive, modern, no frameworks */
+
+/* Basic reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html,body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: #f5f7fb; color: #111827; }
+
+/* Centered container */
+.container {
+  max-width: 760px;
+  margin: 36px auto;
+  padding: 16px;
+}
+
+/* Title */
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  text-align: center;
+  color: #0f172a;
+}
+
+/* Card style for forms and list */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(10, 15, 25, 0.06);
+}
+
+/* Form elements */
+label {
+  display: block;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  color: #334155;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6edf3;
+  font-size: 1rem;
+  outline: none;
+  resize: vertical;
+  transition: box-shadow 0.12s, border-color 0.12s;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  border-color: #c7e2ff;
+  box-shadow: 0 0 0 4px rgba(199, 226, 255, 0.25);
+}
+
+/* Button */
+.full-btn {
+  width: 100%;
+  padding: 12px 16px;
+  margin-top: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #457bee;
+  color: white;
+  box-shadow: 0 6px 12px rgba(37,99,235,0.18);
+  transition: transform 0.08s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.full-btn:active { transform: translateY(1px); }
+.full-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 6px rgba(16,24,40,0.06);
+}
+
+/* Status message */
+.status {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #065f46;
+  min-height: 1.2em;
+}
+
+/* Links area */
+.links {
+  margin-top: 12px;
+  text-align: center;
+}
+.links a {
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 600;
+  opacity: 0.9;
+}
+.links a:hover { text-decoration: underline; }
+
+/* Messages list */
+.messages-card { min-height: 150px; }
+
+.message {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #eef2ff;
+  background: linear-gradient(180deg,#ffffff,#fbfdff);
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(10,15,25,0.03);
+}
+
+.message .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.message .name {
+  font-weight: 700;
+  color: #0f172a;
+}
+.message .time {
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.message .text {
+  white-space: pre-wrap;
+  font-size: 1rem;
+  color: #0b1220;
+}
+
+/* Empty state */
+.empty {
+  padding: 20px;
+  text-align: center;
+  color: #475569;
+  font-size: 0.98rem;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .container { padding: 12px; margin: 18px auto; }
+  .title { font-size: 1.25rem; }
+  .full-btn { padding: 12px; }
+}

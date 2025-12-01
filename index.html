@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Post Message</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1 class="title">Post a Message</h1>
+
+    <form id="postForm" class="card" onsubmit="return false;">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" placeholder="Your name" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" placeholder="Write your message..." required></textarea>
+
+      <button id="sendBtn" class="full-btn" type="submit">Send</button>
+
+      <div id="status" class="status" aria-live="polite"></div>
+
+      <div class="links">
+        <a href="view.html">View messages →</a>
+      </div>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    // initialize post page behavior
+    document.addEventListener('DOMContentLoaded', function () {
+      if (typeof initPost === 'function') initPost();
+    });
+  </script>
+</body>
+</html>
